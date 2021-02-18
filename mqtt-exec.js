@@ -57,16 +57,17 @@ var c = mqtt.connect(options);
 c.on('connect', function() {
   logger.info("Subscribe to topics...: " + topics);
   c.subscribe(topics);
-  c.on('message', function(topic, message) {
-    topic = topic.toString().replace(/"/g, "\\\"");
-    var message = message.toString().replace(/"/g, "\\\"");
-    console.log(topic);
-    console.log(message);
-    executeShellCommand(topic,message);
-    var topic_outgoing = topic.replace(/\/set/g,'/get');
-    console.log("Reportig value back to topic: " + topic_outgoing);
-    c.publish(topic_outgoing,message,{retain: true});
-  });
+});
+
+c.on('message', function(topic, message) {
+  topic = topic.toString().replace(/"/g, "\\\"");
+  var message = message.toString().replace(/"/g, "\\\"");
+  console.log(topic);
+  console.log(message);
+  executeShellCommand(topic,message);
+  var topic_outgoing = topic.replace(/\/set/g,'/get');
+  console.log("Reportig value back to topic: " + topic_outgoing);
+  c.publish(topic_outgoing,message,{retain: true});
 });
 
 function executeShellCommand(topic,payload){

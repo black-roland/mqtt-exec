@@ -22,11 +22,18 @@ var argv = optimist
     , default: __dirname + '/config.json'
     , alias: 'configFile'
   })
+  .options('a', {
+      describe: 'birth and LWT topic'
+    , default: '/mqtt-exec/status'
+    , alias: 'availability-topic'
+  })
   .argv;
 
 // Parse url
 var mqtt_url = url.parse(process.env.MQTT_BROKER_URL || argv.h);
 var auth = (mqtt_url.auth || ':').split(':');
+
+var availability_topic = argv.a;
 
 //var configuration = JSON.parse(fs.readFileSync(__dirname+'/config.json').toString());
 var configuration = {};
@@ -49,12 +56,14 @@ var options = {
   port: mqtt_url.port,
   host: mqtt_url.hostname,
   username: auth[0],
-  password: auth[1]
+  password: auth[1],
+  will: { topic: availability_topic, payload: 'offline', retain: true }
 }
 var c = mqtt.connect(options);
 
 
 c.on('connect', function() {
+  c.publish(availability_topic, 'online', { retain: true });
   logger.info("Subscribe to topics...: " + topics);
   c.subscribe(topics);
 });

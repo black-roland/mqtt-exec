@@ -2,7 +2,6 @@
 
 var mqtt = require('mqtt')
   , optimist = require('optimist')
-  , util = require('util')
   , exec = require('child_process').exec
   , sleep = require('sleep')
   , url = require('url')
@@ -60,7 +59,7 @@ c.on('connect', function() {
   c.subscribe(topics);
   c.on('message', function(topic, message) {
     topic = topic.toString().replace(/"/g, "\\\"");
-    var message = message.toString().replace(/"/g, "\\\"");   
+    var message = message.toString().replace(/"/g, "\\\"");
     console.log(topic);
     console.log(message);
     executeShellCommand(topic,message);
@@ -78,7 +77,7 @@ function executeShellCommand(topic,payload){
     sleep.sleep(1);//sleep for 1 seconds
 }
 
-function puts(error, stdout, stderr) { 
-        util.puts(stdout); 
+function puts(error, stdout, stderr) {
+        console.log(stdout);
         logger.info("Executing Done");
 }
